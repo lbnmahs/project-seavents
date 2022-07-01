@@ -1,42 +1,49 @@
 import React, { useState } from 'react'
 import { HiArrowRight } from 'react-icons/hi'
 import { Link, useNavigate } from 'react-router-dom'
-import axios from 'axios'
 
 const Auth = () => {
-    const navigate = useNavigate()
+    
     const [isSignup, setIsSignup] = useState(false);
-    const [error, setError] = useState('');
     const changeForm = () => {
         setIsSignup((change) => !change);
     };
+    const navigate = useNavigate()
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try{
-            const url = isSignup ? 'http://localhost:4000/api/inviters' : 'http://localhost:4000/api/inviters/auth';
-            const { data: res } = await axios.post(url, data);
-            if(isSignup){
-                navigate('/inviters/auth');
+        if(isSignup){
+            const response = await fetch('http://localhost:5000/api/inviters', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({userName, email, password})
+            })
+            const data = await response.json()
+            if(data.message === 'Inviter created'){
+                navigate('/inviters/auth')
             }
-            else{
-                localStorage.setItem('token', res.data);
-                window.location='/home';
-            }
-            console.log(res.message);
-        }catch(error){
-            if(error.response && error.response.status >= 400 && error.response.status <= 500){
-                setError(error.response.data.message);
+        }else{
+            const response = await fetch('http://localhost:5000/api/inviters/auth', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email, password})
+            })
+            const data = await response.json()
+            if(data.inviter){
+                localStorage.setItem('token', data.inviter)
+                alert("You have logged in successfully")
+                window.location.href = '/home';
+            }else{
+                alert("Check your email or password")
             }
         }
+       
     };
 
-    const [data, setData] = useState(isSignup ? {userName: '', email: '', password: ''} : {email: '', password: ''});
-    const handleChange = ({ currentTarget: input }) => {
-        setData({
-            ...data,
-            [input.name]: input.value,
-        })
-    }
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [userName, setUserName] = useState('');
+
+
 
     return (
         <div className="flex h-screen">
@@ -67,9 +74,9 @@ const Auth = () => {
                                     type="text" 
                                     placeholder="UserName" 
                                     name="userName"
-                                    value={data.userName}
+                                    value={userName}
                                     required
-                                    onChange={handleChange}
+                                    onChange = {(e) => setUserName(e.target.value)}
                                 />
                             </div>
 
@@ -82,9 +89,9 @@ const Auth = () => {
                                     type="email" 
                                     placeholder="Email" 
                                     name="email"
-                                    value={data.email}
+                                    value={email}
                                     required
-                                    onChange={handleChange}
+                                    onChange = {(e) => setEmail(e.target.value)}
                                 />
                             </div>
 
@@ -99,9 +106,9 @@ const Auth = () => {
                                 type="email" 
                                 placeholder="Email" 
                                 name="email"
-                                value={data.email}
+                                value={email}
                                 required
-                                onChange={handleChange}
+                                onChange = {(e) => setEmail(e.target.value)}
                             />
                         </div>
                     }
@@ -114,14 +121,12 @@ const Auth = () => {
                             type="password" 
                             placeholder="Password" 
                             name="password"
-                            value={data.password}
+                            value={password}
                             required
-                            onChange={handleChange}
+                            onChange = {(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    {
-                        error && <p className="text-red-500 text-sm">{error}</p>
-                    }
+                    
                     
                     <button className="flex items-center justify-center py-3 px-10 bg-purple-500 text-white text-lg rounded-lg">
                         {isSignup ? "Sign Up" : "Sign In"}
