@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { HiArrowRight } from 'react-icons/hi'
 import { Link, useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
+import PulseLoader from 'react-spinners/PulseLoader'
 
 const Auth = () => {
     
@@ -12,17 +15,26 @@ const Auth = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if(isSignup){
-            const response = await fetch('http://localhost:5000/api/inviters', {
+            const response = await fetch('http://localhost:5000/api/inviters/auth/register', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({userName, email, password})
             })
             const data = await response.json()
             if(data.message === 'Inviter created'){
+                toast.success('Sign Up successfull', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
                 navigate('/inviters/auth')
             }
         }else{
-            const response = await fetch('http://localhost:5000/api/inviters/auth', {
+            const response = await fetch('http://localhost:5000/api/inviters/auth/login', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({email, password})
@@ -30,14 +42,36 @@ const Auth = () => {
             const data = await response.json()
             if(data.inviter){
                 localStorage.setItem('token', data.inviter)
-                alert("You have logged in successfully")
+                toast.success('Login successful', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
+                
                 window.location.href = '/home';
             }else{
-                alert("Check your email or password")
+                toast.error('Invalid email or password', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
             }
         }
        
     };
+    const [loading, setLoading] = useState(true)
+    const switchLoader = () => {
+        console.log("Changed")
+        setLoading((change) => !change);
+    }
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -58,7 +92,7 @@ const Auth = () => {
             <div className="block p-10 w-full max-w-2xl mx-auto sm:flex sm:flex-col sm:w-full">
                 <h1 className="text-4xl font-bold">{isSignup ? "Sign Up" : "Sign In"}</h1>
                 <div className="h-1 w-20 my-7 bg-purple-500 rounded-sm"></div>
-            
+                <ToastContainer />
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="mt-4 flex flex-col justify-center">
@@ -128,9 +162,19 @@ const Auth = () => {
                     </div>
                     
                     
-                    <button className="flex items-center justify-center py-3 px-10 bg-purple-500 text-white text-lg rounded-lg">
-                        {isSignup ? "Sign Up" : "Sign In"}
-                        <HiArrowRight style={{ fontSize: '20px', marginLeft: '10px' }} />
+                    <button className="rounded-lg" onCLick={switchLoader}>
+                        {
+                            loading?
+                                <div className="flex items-center justify-center py-3 px-10 bg-purple-500 text-white text-lg rounded-lg">
+                                    {isSignup ? "Sign Up" : "Sign In"}
+                                    <HiArrowRight style={{ fontSize: '20px', marginLeft: '10px' }} /> 
+                                </div> 
+                            :
+                                <div>
+                                    <PulseLoader size={10} color={"#fff"} />
+                                </div>
+                        }
+                        
                     </button>
                     <Link to="/inviters/auth" onClick={changeForm} className="flex mt-6 items-center justify-center py-3 px-10 bg-black text-white text-lg rounded-lg">
                         {isSignup ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
