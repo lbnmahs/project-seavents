@@ -18,10 +18,10 @@ const PORT = process.env.PORT || 5000
 mongoose.connect(CONN, { useNewUrlParser: true, useUnifiedTopology: true }, () => {console.log('Connected to database')})
 
 //routes
-app.post('/api/inviters', async (req, res) => {
+app.post('/api/inviters/auth/register', async (req, res) => {
     console.log(req.body)
     try{
-        const newPassword = await bcrypt.hash(req.body.password, process.env.SALT_ROUNDS)
+        const newPassword = await bcrypt.hash(req.body.password, 10)
         await Inviter.create({ 
             userName: req.body.userName,
             email: req.body.email,
@@ -34,14 +34,14 @@ app.post('/api/inviters', async (req, res) => {
     }
 })
 
-app.post('/api/inviters/auth', async (req, res) => {
+app.post('/api/inviters/auth/login', async (req, res) => {
    const inviter = await Inviter.findOne({ email: req.body.email })
    if(!inviter){
         return { status: 'error', message: 'Inviter not found' }
    }
    const isPasswordValid = await bcrypt.compare(req.body.password, inviter.password)
    if(isPasswordValid){
-        const token = jwt.sign({ email: inviter.email }, process.env.JWT_KEY)
+        const token = jwt.sign({ email: inviter.email }, process.env.JWT_KEY, { expiresIn: '1h' })
         return res.json({ status: 'ok', inviter: token })
    }else{
         return res.json({ status: 'error', message: 'Invalid email or password', inviter: false })
