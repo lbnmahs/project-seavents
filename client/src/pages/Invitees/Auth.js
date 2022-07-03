@@ -6,12 +6,16 @@ import 'react-toastify/dist/ReactToastify.css';
 import PulseLoader from 'react-spinners/PulseLoader'
 
 const Auth = () => {
-    
+    const navigate = useNavigate()
     const [isSignup, setIsSignup] = useState(false);
     const changeForm = () => {
         setIsSignup((change) => !change);
     };
-    const navigate = useNavigate()
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [userName, setUserName] = useState('');
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if(isSignup){
@@ -52,7 +56,7 @@ const Auth = () => {
                     progress: undefined,
                 })
                 
-                window.location.href = '/home';
+                window.location.href = '/inviter/home';
             }else{
                 toast.error('Invalid email or password', {
                     position: "top-center",
@@ -65,19 +69,13 @@ const Auth = () => {
                 })
             }
         }
-       
     };
+
     const [loading, setLoading] = useState(true)
     const switchLoader = () => {
         console.log("Changed")
         setLoading((change) => !change);
     }
-
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [userName, setUserName] = useState('');
-
-
 
     return (
         <div className="flex h-screen">
@@ -162,7 +160,7 @@ const Auth = () => {
                     </div>
                     
                     
-                    <button className="rounded-lg" onCLick={switchLoader}>
+                    <button className="rounded-lg" onClick={switchLoader}>
                         {
                             loading?
                                 <div className="flex items-center justify-center py-3 px-10 bg-purple-500 text-white text-lg rounded-lg">
@@ -170,7 +168,7 @@ const Auth = () => {
                                     <HiArrowRight style={{ fontSize: '20px', marginLeft: '10px' }} /> 
                                 </div> 
                             :
-                                <div>
+                                <div className="flex items-center justify-center py-3 px-10 bg-purple-500 text-white text-lg rounded-lg">
                                     <PulseLoader size={10} color={"#fff"} />
                                 </div>
                         }
