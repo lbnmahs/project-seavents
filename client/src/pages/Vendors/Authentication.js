@@ -3,6 +3,8 @@ import { HiArrowRight } from 'react-icons/hi'
 import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import PropagateLoader from 'react-spinners/PropagateLoader'
+
 
 const Authentication = () => {
   const navigate = useNavigate()
@@ -10,7 +12,11 @@ const Authentication = () => {
   const changeForm = () => {
     setIsSignup((change) => !change);
   };
-
+  const [loading, setLoading] = useState(true)
+  const switchLoader = () => {
+      console.log("Changed")
+      setLoading((change) => !change);
+  }
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [vendorName, setVendorName] = useState('');
@@ -37,6 +43,17 @@ const Authentication = () => {
           progress: undefined,
         })
         navigate('/vendors/home')
+      }else{
+        toast.error('Something went wrong', {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        })
+        switchLoader()
       }
     }else{
       const response = await fetch('http://localhost:5000/api/vendors/auth/login', {
@@ -66,6 +83,7 @@ const Authentication = () => {
           closeOnClick: true,
           pauseOnHover: true,
         })
+        switchLoader()
       }
     }
   }
@@ -186,9 +204,18 @@ const Authentication = () => {
             </div>
           }
 
-          <button className="flex items-center justify-center py-3 px-10 bg-purple-500 text-white text-lg rounded-lg">
-              {isSignup ? "Sign Up" : "Sign In"}
-              <HiArrowRight style={{ fontSize: '20px', marginLeft: '10px' }} />
+          <button className="rounded-lg" onClick={switchLoader}>
+            {
+              loading?
+                <div className="flex items-center justify-center py-3 px-10 bg-purple-500 text-white text-lg rounded-lg">
+                    {isSignup ? "Sign Up" : "Sign In"}
+                    <HiArrowRight style={{ fontSize: '20px', marginLeft: '10px' }} /> 
+                </div> 
+              :
+                <div className="py-7 px-10 bg-gray-500 text-white text-lg rounded-lg">
+                    <PropagateLoader size={12} color={"#fff"} speedMultiplier={0.8} />
+                </div>
+            }            
           </button>
           <Link to="/vendors/auth" onClick={changeForm} className="flex mt-10 items-center justify-center py-3 px-10 bg-black text-white text-lg rounded-lg">
               {isSignup ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
