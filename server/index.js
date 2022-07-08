@@ -50,7 +50,6 @@ app.post('/api/inviters/auth/login', async (req, res) => {
 })
 
 app.post('/api/vendors/auth/register', async (req, res) => {
-    console.log(req.body)
     try{
         const newPassword = await bcrypt.hash(req.body.password, 10)
         await Vendor.create({ 
@@ -78,6 +77,22 @@ app.post('/api/vendors/auth/login', async (req, res) => {
         return res.json({ status: 'ok', vendor: token })
     }else{
         return res.json({ status: 'error', message: 'Invalid email or password', vendor: false })
+    }
+})
+
+// GET the name of the user and the events of an inviter
+app.get('/api/inviters/:id/events', async (req, res) => {
+    const token = req.headers['x-access-token']
+    try{
+        const decoded = jwt.verify(token, process.env.JWT_KEY)
+        const email = decoded.email
+        const inviter = await Inviter.findOne({ email: email }, req.params.id)
+        const events = await inviter.events
+        
+        return res.json({ status: 'ok', inviter: inviter.userName, events: events })
+    }catch(error){
+        console.log(error)
+        res.json({ message: 'Error getting inviter' })
     }
 })
 
