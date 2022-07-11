@@ -13,7 +13,6 @@ const Auth = () => {
     };
     const [loading, setLoading] = useState(true)
     const switchLoader = () => {
-        console.log("Changed")
         setLoading((change) => !change);
     }
 
@@ -40,6 +39,7 @@ const Auth = () => {
                     draggable: true,
                     progress: undefined,
                 })
+                switchLoader()
                 navigate('/inviters/auth')
             }else{
                 toast.error('Something went wrong', {
@@ -71,7 +71,7 @@ const Auth = () => {
                     draggable: true,
                     progress: undefined,
                 })
-                
+                switchLoader()
                 window.location.href = '/inviter/home';
             }else{
                 toast.error('Invalid email or password', {

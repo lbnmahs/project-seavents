@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import Inviter from './models/inviter.model';
 import Vendor from './models/vendor.model';
+import Event from './models/event.model';
 
 dotenv.config();
 const app = express();
@@ -19,14 +20,16 @@ const PORT = process.env.PORT || 5000
 mongoose.connect(CONN, { useNewUrlParser: true, useUnifiedTopology: true }, () => {console.log('Connected to database')})
 
 //routes
+// INVITER ROUTES
+// inviter signup
 app.post('/api/inviters/auth/register', async (req, res) => {
-    console.log(req.body)
     try{
         const newPassword = await bcrypt.hash(req.body.password, 10)
         await Inviter.create({ 
             userName: req.body.userName,
             email: req.body.email,
-            password: newPassword
+            password: newPassword,
+            events: []
         })
         res.json({ message: 'Inviter created' })
     }catch(err){
@@ -34,7 +37,7 @@ app.post('/api/inviters/auth/register', async (req, res) => {
         res.json({ message: 'Error creating inviter' })
     }
 })
-
+// inviter login
 app.post('/api/inviters/auth/login', async (req, res) => {
    const inviter = await Inviter.findOne({ email: req.body.email })
    if(!inviter){
@@ -48,7 +51,98 @@ app.post('/api/inviters/auth/login', async (req, res) => {
         return res.json({ status: 'error', message: 'Invalid email or password', inviter: false })
    }
 })
+// inviter adding event
+app.post('/api/inviters/events/create', async (req, res) => {
+    const { eventName, eventLocation, eventDescription, eventImage, eventDate, eventTime, inviter } = req.body
+    let existingInviter
+    try{
+       existingInviter = await Inviter.findById(inviter)
+    }catch(err){
+        console.log(err)
+        return res.json({ status: 'error', message: 'Inviter not found' })
+    }
+    if(!existingInviter){
+        return res.json({ status: 'error', message: 'Inviter not found' })
+    }
+    const event = new Event({ 
+        eventName, eventLocation, eventDescription, eventImage, eventDate, eventTime, inviter
+     })
+    try{
+        const session = await mongoose.startSession()
+        session.startTransaction()
+        await event.save({ session})
+        existingInviter.events.push(event)
+        await existingInviter.save({ session })
+        await session.commitTransaction()
+        
+    }catch(err){
+        console.log(err)
+        return res.json({ status: 'error', message: 'Error creating event' })
+    }
+    res.json({ message: 'Event created' })
+})
+// inviter updating event
+app.put('/api/inviters/events/update/:id', async (req, res) => {
+    try{
+        await Event.findOneAndUpdate(req.params.id, {
+            eventName: req.body.eventName,
+            eventLocation: req.body.eventLocation,
+            eventDescription: req.body.eventDescription,
+            eventImage: req.body.eventImage,
+            eventDate: req.body.eventDate,
+            eventTime: req.body.eventTime,
+        })
+        res.json({ message: 'Event updated' })
+    }catch(err){
+        console.log(err)
+        res.json({ message: 'Error updating event' })
+    }
+})
+// inviter getting their events
+app.get('/api/inviters/events/:id', async (req, res) => {
+    try{
+        const events = await Event.findById(req.params.id)
+        res.json({ events })
+        if(!events){
+            res.json({ message: 'No events found' })
+        }
+    }catch(err){
+        console.log(err)
+        res.json({ message: 'Error getting events' })
+    }
+})
+// inviter deleting event
+app.delete('/api/inviters/events/:id', async (req, res) => {
+    let event
+    try{
+        event = await Event.findByIdAndDelete(req.params.id).populate('inviter')
+        await event.inviter.events.pull(event)
+        await event.inviter.save()
+        res.json({ message: 'Event deleted' })
+        if(!event){
+            res.json({ message: 'No events found' })
+        }
+    }catch(err){
+        console.log(err)
+        res.json({ message: 'Error deleting event' })
+    }
+})
+// inviter getting events
+app.get('/api/inviters/events/inviterevent/:id', async (req, res) => {
+    let inviterEvents;
+    try{
+        inviterEvents = await Inviter.findById(req.params.id).populate('events')
+    }catch(err){
+        console.log(err)
+    }
+    if(!inviterEvents){
+        res.json({ message: 'No events found' })
+    }
+    return res.json({ events: inviterEvents })
+})
 
+
+// VENDOR ROUTES
 app.post('/api/vendors/auth/register', async (req, res) => {
     try{
         const newPassword = await bcrypt.hash(req.body.password, 10)
@@ -77,22 +171,6 @@ app.post('/api/vendors/auth/login', async (req, res) => {
         return res.json({ status: 'ok', vendor: token })
     }else{
         return res.json({ status: 'error', message: 'Invalid email or password', vendor: false })
-    }
-})
-
-// GET the name of the user and the events of an inviter
-app.get('/api/inviters/:id/events', async (req, res) => {
-    const token = req.headers['x-access-token']
-    try{
-        const decoded = jwt.verify(token, process.env.JWT_KEY)
-        const email = decoded.email
-        const inviter = await Inviter.findOne({ email: email }, req.params.id)
-        const events = await inviter.events
-        
-        return res.json({ status: 'ok', inviter: inviter.userName, events: events })
-    }catch(error){
-        console.log(error)
-        res.json({ message: 'Error getting inviter' })
     }
 })
 
