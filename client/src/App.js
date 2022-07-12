@@ -4,10 +4,13 @@ import Authentication from './pages/Vendors/Authentication';
 import LandingPage from './pages/LandingPage'
 import Home from './pages/Invitees/Home';
 import VendorHome from './pages/Vendors/VendorHome';
+import CreateEvent from './pages/Invitees/CreateEvent';
+import EventDetail from './pages/Invitees/EventDetail';
 
 function App() {
   const inviter = localStorage.getItem('token');
   const vendor = localStorage.getItem('token');
+
   return (
       <BrowserRouter>
         <Routes>
@@ -18,6 +21,9 @@ function App() {
           <Route path="/vendors/auth" element={<Authentication />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/vendor/home" element={<VendorHome />} />
+
+          <Route path="*/myEvent/create" element={<CreateEvent />} />
+          <Route path="/myEvent/:id" element={<EventDetail />} />
         </Routes>
       </BrowserRouter>
     

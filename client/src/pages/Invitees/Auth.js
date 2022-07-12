@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import PropagateLoader from 'react-spinners/PropagateLoader'
+import jwtDecoder from 'jwt-decode'
 
 const Auth = () => {
     const navigate = useNavigate()
@@ -29,6 +30,9 @@ const Auth = () => {
                 body: JSON.stringify({userName, email, password})
             })
             const data = await response.json()
+            console.log(data)
+            
+
             if(data.message === 'Inviter created'){
                 toast.success('Sign Up successfull', {
                     position: "top-center",
@@ -40,7 +44,7 @@ const Auth = () => {
                     progress: undefined,
                 })
                 switchLoader()
-                navigate('/inviters/auth')
+                changeForm()
             }else{
                 toast.error('Something went wrong', {
                     position: "top-center",
@@ -60,6 +64,9 @@ const Auth = () => {
                 body: JSON.stringify({email, password})
             })
             const data = await response.json()
+            console.log(data)
+            const decodedData = jwtDecoder(data.inviter)
+            console.log(decodedData)
             if(data.inviter){
                 localStorage.setItem('token', data.inviter)
                 toast.success('Login successful', {
@@ -72,7 +79,7 @@ const Auth = () => {
                     progress: undefined,
                 })
                 switchLoader()
-                window.location.href = '/inviter/home';
+                navigate('/inviter/home')
             }else{
                 toast.error('Invalid email or password', {
                     position: "top-center",

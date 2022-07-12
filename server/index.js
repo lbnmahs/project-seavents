@@ -45,7 +45,7 @@ app.post('/api/inviters/auth/login', async (req, res) => {
    }
    const isPasswordValid = await bcrypt.compare(req.body.password, inviter.password)
    if(isPasswordValid){
-        const token = jwt.sign({ email: inviter.email }, process.env.JWT_KEY, { expiresIn: '1h' })
+        const token = jwt.sign({ email: inviter.email, id: inviter._id, useName: inviter.userName }, process.env.JWT_KEY, { expiresIn: '1h' })
         return res.json({ status: 'ok', inviter: token })
    }else{
         return res.json({ status: 'error', message: 'Invalid email or password', inviter: false })
