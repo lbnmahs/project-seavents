@@ -31,7 +31,6 @@ const InviterEvent = () => {
                             key={index} 
                             eventName={event.eventName} 
                             eventDescription={event.eventDescription} 
-                            eventImage={event.eventImage} 
                         />
                     ))
                     :

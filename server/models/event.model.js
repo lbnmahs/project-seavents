@@ -4,10 +4,12 @@ const Event = new mongoose.Schema({
     eventName: { type: String, required: true },
     eventLocation: { type: String, required: true },
     eventDescription: { type: String, required: true },
-    eventImage: { type: String, required: true },
+    eventType: { type: String, required: true },
     eventDate: { type: Date, required: true },
     eventTime: { type: String, required: true },
-    createdAt: { type: Date },
+    adults: { type: Number, required: true },
+    children: { type: Number, required: true },
+    budget: { type: Number, required: true },
     inviter: { type: mongoose.Schema.Types.ObjectId, ref: "Inviter", required: true},
 }, {collection: 'event'});
 

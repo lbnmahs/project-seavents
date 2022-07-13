@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import PropagateLoader from 'react-spinners/PropagateLoader'
-import jwtDecoder from 'jwt-decode'
 
 const Auth = () => {
     const navigate = useNavigate()
@@ -64,9 +63,7 @@ const Auth = () => {
                 body: JSON.stringify({email, password})
             })
             const data = await response.json()
-            console.log(data)
-            const decodedData = jwtDecoder(data.inviter)
-            console.log(decodedData)
+            
             if(data.inviter){
                 localStorage.setItem('token', data.inviter)
                 toast.success('Login successful', {

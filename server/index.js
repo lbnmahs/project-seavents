@@ -53,7 +53,7 @@ app.post('/api/inviters/auth/login', async (req, res) => {
 })
 // inviter adding event
 app.post('/api/inviters/events/create', async (req, res) => {
-    const { eventName, eventLocation, eventDescription, eventImage, eventDate, eventTime, inviter } = req.body
+    const { eventName, eventLocation, eventDescription, eventType, eventDate, eventTime, inviter, adults, children, budget } = req.body
     let existingInviter
     try{
        existingInviter = await Inviter.findById(inviter)
@@ -65,7 +65,7 @@ app.post('/api/inviters/events/create', async (req, res) => {
         return res.json({ status: 'error', message: 'Inviter not found' })
     }
     const event = new Event({ 
-        eventName, eventLocation, eventDescription, eventImage, eventDate, eventTime, inviter
+        eventName, eventLocation, eventDescription, eventType , eventDate, eventTime, inviter, adults, children, budget
      })
     try{
         const session = await mongoose.startSession()
@@ -88,9 +88,13 @@ app.put('/api/inviters/events/update/:id', async (req, res) => {
             eventName: req.body.eventName,
             eventLocation: req.body.eventLocation,
             eventDescription: req.body.eventDescription,
-            eventImage: req.body.eventImage,
+            eventType: req.body.eventType,
             eventDate: req.body.eventDate,
             eventTime: req.body.eventTime,
+            adults: req.body.adults,
+            children: req.body.children,
+            budget: req.body.budget
+
         })
         res.json({ message: 'Event updated' })
     }catch(err){

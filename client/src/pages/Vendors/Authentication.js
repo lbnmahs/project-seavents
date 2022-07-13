@@ -142,7 +142,7 @@ const Authentication = () => {
                 />
               </div>
               <div className="flex flex-wrap mb-10">
-                <div className="w-full md:w-1/2 pr-3  mb-6 md:mb-0">
+                <div className="w-full md:w-1/2 pr-3 mb-6 md:mb-0">
                   <label className="block text-base font-semibold mb-2" htmlFor="grid-first-name">
                     First phone number
                   </label>

@@ -22,7 +22,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/vendor/home" element={<VendorHome />} />
 
-          <Route path="*/myEvent/create" element={<CreateEvent />} />
+          <Route path="/myEvent/create" element={<CreateEvent />} />
           <Route path="/myEvent/:id" element={<EventDetail />} />
         </Routes>
       </BrowserRouter>
