@@ -110,7 +110,7 @@ const Auth = () => {
                 <ToastContainer />
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="mt-4 flex flex-col justify-center">
+                <form onSubmit={handleSubmit} className="mt-4 flex flex-col justify-center" autoComplete="off">
                     {
                         isSignup ?
                         <div className="mb-10 flex-col items-center justify-around sm:flex-row">

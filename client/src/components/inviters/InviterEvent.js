@@ -22,12 +22,13 @@ const InviterEvent = () => {
     })
 
     return (
-        <div className="bg-white mt-10 max-w-7xl mx-auto rounded-3xl p-10">
+        <div className="bg-white mt-10 max-w-7xl mx-auto rounded-3xl p-10 shadow-xl">
             <h1 className="text-3xl font-bold text-gray-800 my-5 mx-auto">Your events</h1>
             <div className="grid grid-cols-3 gap-3">
                 {events ?
                     events.map((event, index) => (
                         <EventCard 
+                            id={event._id}
                             key={index} 
                             eventName={event.eventName} 
                             eventDescription={event.eventDescription} 

@@ -27,7 +27,10 @@ const Home = () => {
             <nav className="flex justify-around items-center bg-white mx-auto">
                 <Link to="/" className="font-bold italic text-blue-500 text-xl p-6">Sea<span className="text-purple-500">vents</span></Link>
                 <h1 className="text-3xl font-base">{getGreeting()} </h1>
-                <button onClick={logout} className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg">Logout</button>
+                <div>
+                    <Link to="/locations" className="py-2 px-4 mr-5 bg-black text-white rounded-lg hover:bg-white hover:border-2 hover:border-black hover:text-black  duration-700" target="_blank">Suggested locations</Link>
+                    <button onClick={logout} className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg duration-700">Logout</button>
+                </div>
             </nav>
             <div className="flex  flex-col justify-center items-center bg-white mt-5 max-w-7xl shadow-xl mx-auto rounded-3xl p-10">
                 <h1 className="text-6xl mb-7 font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">Welcome to SeaVents</h1>

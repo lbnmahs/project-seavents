@@ -53,7 +53,7 @@ app.post('/api/inviters/auth/login', async (req, res) => {
 })
 // inviter adding event
 app.post('/api/inviters/events/create', async (req, res) => {
-    const { eventName, eventLocation, eventDescription, eventType, eventDate, eventTime, inviter, adults, children, budget } = req.body
+    const { eventName, eventDescription, eventType, eventDate, eventTime, inviter, adults, children, budget } = req.body
     let existingInviter
     try{
        existingInviter = await Inviter.findById(inviter)
@@ -62,10 +62,10 @@ app.post('/api/inviters/events/create', async (req, res) => {
         return res.json({ status: 'error', message: 'Inviter not found' })
     }
     if(!existingInviter){
-        return res.json({ status: 'error', message: 'Inviter not found' })
+        return res.json({ status: 'error', message: 'Unable to find user with this ID' })
     }
     const event = new Event({ 
-        eventName, eventLocation, eventDescription, eventType , eventDate, eventTime, inviter, adults, children, budget
+        eventName, eventDescription, eventType , eventDate, eventTime, inviter, adults, children, budget
      })
     try{
         const session = await mongoose.startSession()
@@ -86,7 +86,6 @@ app.put('/api/inviters/events/update/:id', async (req, res) => {
     try{
         await Event.findOneAndUpdate(req.params.id, {
             eventName: req.body.eventName,
-            eventLocation: req.body.eventLocation,
             eventDescription: req.body.eventDescription,
             eventType: req.body.eventType,
             eventDate: req.body.eventDate,
@@ -104,16 +103,18 @@ app.put('/api/inviters/events/update/:id', async (req, res) => {
 })
 // inviter getting their events
 app.get('/api/inviters/events/:id', async (req, res) => {
+    const id = req.params.id
+    let event
     try{
-        const events = await Event.findById(req.params.id)
-        res.json({ events })
-        if(!events){
-            res.json({ message: 'No events found' })
-        }
+        event = await Event.findById(id)
     }catch(err){
         console.log(err)
-        res.json({ message: 'Error getting events' })
+        res.json({ message: 'Error getting event' })
     }
+    if(!event){
+        res.json({ message: 'No event found' })
+    }
+    return res.json({ event })
 })
 // inviter deleting event
 app.delete('/api/inviters/events/:id', async (req, res) => {

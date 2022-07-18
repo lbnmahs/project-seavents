@@ -1,38 +1,67 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import jwtDecode from 'jwt-decode'
+import axios from 'axios'
 
 const CreateEvent = () => {
   const logout = () => {
     localStorage.removeItem('token')
     window.location.replace("/inviters/auth")
   }
-  const [eventName, setEventName] = useState('')
-  const [eventDate, setEventDate] = useState('')
-  const [eventTime, setEventTime] = useState('')
-  const [eventLocation, setEventLocation] = useState('')
-  const [eventDescription, setEventDescription] = useState('')
-  const [adults, setAdults] = useState('')
-  const [children, setChildren] = useState('')
-  const [ budget, setBudget ] = useState('')
-  const [ eventType, setEventType ] = useState('')
+  const navigate = useNavigate()  
+  const [ inputs, setInputs ] = useState({
+    eventName: '',
+    eventDescription: '',
+    eventDate: '',
+    eventTime: '',
+    eventType: '',
+    adults: '',
+    children: '',
+    budget: '',
+  })
+  const handleChange = (e) => {
+    setInputs((prevState) => ({
+      ...inputs,
+      [e.target.name]: e.target.value
+    }))
+  }
+  const sendRequest = async() => {
+    const token = localStorage.getItem('token')
+    const decoded = jwtDecode(token)
+    const userId = decoded.id
+    const response = await axios.post('http://localhost:5000/api/inviters/events/create', {
+      eventName: inputs.eventName,
+      eventDescription: inputs.eventDescription,
+      eventDate: inputs.eventDate,
+      eventTime: inputs.eventTime,
+      eventType: inputs.eventType,
+      adults: inputs.adults,
+      children: inputs.children,
+      budget: inputs.budget,
+      inviter: userId
+    }).catch(err => {
+      console.log(err)
+      toast.error('Something went wrong!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
 
-  const token = localStorage.getItem('token')
-  const decoded = jwtDecode(token)
-  const userId = decoded.id
-
+      })
+    })
+    const data = response.data
+    return data
+  }
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const response = await fetch('http://localhost:5000/api/inviters/events/create', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ eventName, eventDate, eventTime, eventLocation, eventDescription, eventType, adults, children, budget, userId })
-    })
-    const data = await response.json()
-    if(data.message === 'Event created'){
-      toast.success('Event created', {
+    console.log(inputs)
+    sendRequest().then(data => {console.log(data)}).then(() => {
+      toast.success('Event created!', {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -41,19 +70,9 @@ const CreateEvent = () => {
         draggable: true,
         progress: undefined,
       })
-      window.location.replace("/inviters/home")
-    }else{
-      toast.error('Something went wrong', {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      })
-    }
+    }).then(() => {navigate('/inviter/home')})
   }
+
 
   return (
     <div className="h-full bg-gray-200 w-full bg-cover bg-center" style={{ backgroundImage: "url('/assets/images/two.png')"  }}>
@@ -67,7 +86,7 @@ const CreateEvent = () => {
       </div>
 
       <div className="max-w-5xl bg-white shadow-xl rounded-3xl flex p-10 mx-auto">
-        <form className="mt-4 w-full flex flex-col mx-auto" onSubmit={handleSubmit}>
+        <form className="mt-4 w-full flex flex-col mx-auto" onSubmit={handleSubmit} autoComplete="off">
           <div className="mb-10 flex flex-wrap">
             <div className="w-full md:w-1/2 pr-3 mb-6 md:mb-0">
               <label className="block text-base font-semibold mb-2" htmlFor="eventName">
@@ -79,9 +98,8 @@ const CreateEvent = () => {
                 placeholder="Name of Event" 
                 name="eventName"
                 required
-                value={eventName}
-                onChange = {(e) => setEventName(e.target.value)}
-
+                value={inputs.eventName}
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 pl-2">
@@ -94,9 +112,8 @@ const CreateEvent = () => {
                 placeholder="Event Type"
                 name="eventType"
                 required
-                value={eventType}
-                onChange={(e) => setEventType(e.target.value)}
-
+                value={inputs.eventType}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -111,8 +128,8 @@ const CreateEvent = () => {
               placeholder="Event Description" 
               name="eventDescription"
               required
-              value={eventDescription}
-              onChange = {(e) => setEventDescription(e.target.value)}
+              value = {inputs.eventDescription}
+              onChange={handleChange}
 
             />
           </div>
@@ -124,8 +141,8 @@ const CreateEvent = () => {
               placeholder="Budget"
               name="budget"
               required
-              value={budget}
-              onChange={(e) => setBudget(e.target.value)}
+              value = {inputs.budget}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-10 flex flex-wrap">
@@ -136,9 +153,8 @@ const CreateEvent = () => {
                 type="date"
                 name="eventDate"
                 required
-                value={eventDate}
-                onChange={(e) => setEventDate(e.target.value)}
-
+                value = {inputs.eventDate}
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 pl-2">
@@ -148,8 +164,8 @@ const CreateEvent = () => {
                 type="time"
                 name="eventTime"
                 required
-                value={eventTime}
-                onChange={(e) => setEventTime(e.target.value)}
+                value = {inputs.eventTime}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -161,8 +177,8 @@ const CreateEvent = () => {
                 type="number"
                 name="adults"
                 required
-                value={adults}
-                onChange={(e) => setAdults(e.target.value)}
+                value = {inputs.adults}
+                onChange={handleChange}
               />
             </div>
             <div className="w-full md:w-1/2 pl-2">
@@ -172,24 +188,12 @@ const CreateEvent = () => {
                 type="number"
                 name="children"
                 required
-                value={children}
-                onChange={(e) => setChildren(e.target.value)}
+                value = {inputs.children}
+                onChange={handleChange}
               />
             </div>
           </div>
-          <div className="mb-10">
-            <label className="block text-base font-semibold mb-2" htmlFor="eventLocation">Location</label>
-            <input
-              className="rounded-lg bg-gray-200 w-full py-4 px-3 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-2 border-purple-500"
-              type="text"
-              placeholder="Location"
-              name="eventLocation"
-              required
-              value={eventLocation}
-              onChange={(e) => setEventLocation(e.target.value)}
-            />
-          </div>
-
+        
           <button 
             className="rounded-lg flex items-center justify-center py-3 px-10 bg-purple-500 text-white text-lg"
             type="submit"

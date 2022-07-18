@@ -6,6 +6,8 @@ import Home from './pages/Invitees/Home';
 import VendorHome from './pages/Vendors/VendorHome';
 import CreateEvent from './pages/Invitees/CreateEvent';
 import EventDetail from './pages/Invitees/EventDetail';
+import ViewEvent from './pages/Invitees/ViewEvent';
+import Location from './pages/Invitees/Location';
 
 function App() {
   const inviter = localStorage.getItem('token');
@@ -14,16 +16,18 @@ function App() {
   return (
       <BrowserRouter>
         <Routes>
-          {inviter ? <Route path="/inviter/home" element={<Home />} /> : <Route path="/inviters/auth" element={<Auth />} />}
+          {inviter &&
+            <> 
+              <Route path="/inviter/home" element={<Home />} />
+              <Route path="/myEvent/create" element={<CreateEvent />} />
+              <Route path="/myEvent/:id" element={<EventDetail />} />
+              <Route path="/locations" element={<Location />} />
+            </>
+          }
           {vendor ? <Route path="/vendor/home" element={<VendorHome />} /> : <Route path="/vendors/auth" element={<Authentication />} />}
-          <Route path="/inviter/home" element={<Home />}/>
           <Route path="/inviters/auth" element={<Auth />} />
-          <Route path="/vendors/auth" element={<Authentication />} />
           <Route path="/" element={<LandingPage />} />
-          <Route path="/vendor/home" element={<VendorHome />} />
-
-          <Route path="/myEvent/create" element={<CreateEvent />} />
-          <Route path="/myEvent/:id" element={<EventDetail />} />
+          <Route path="/event/:id" element={<ViewEvent />} />
         </Routes>
       </BrowserRouter>
     
