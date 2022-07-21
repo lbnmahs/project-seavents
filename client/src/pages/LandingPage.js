@@ -27,7 +27,7 @@ const LandingPage = () => {
         </motion.div>
       </section>
 
-      <section className="w-screen h-screen overflow-y-hidden overflow-x-hidden flex justify-center items-center">
+      {/* <section className="w-screen h-screen overflow-y-hidden overflow-x-hidden flex justify-center items-center">
         <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -39,7 +39,7 @@ const LandingPage = () => {
           <p className="mb-10">Let people use your space to hold events and have fun.</p>
           <Link to="/vendors/auth" className="py-3 px-6 bg-black text-white rounded-xl hover:bg-purple-500 duration-700">Share space</Link>
         </motion.div>
-      </section>
+      </section> */}
     </>
     
   )

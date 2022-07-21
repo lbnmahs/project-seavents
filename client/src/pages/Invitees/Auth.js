@@ -3,7 +3,7 @@ import { HiArrowRight } from 'react-icons/hi'
 import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import PulseLoader from 'react-spinners/PulseLoader'
+import PropagateLoader from 'react-spinners/PropagateLoader'
 
 const Auth = () => {
     const navigate = useNavigate()
@@ -11,6 +11,10 @@ const Auth = () => {
     const changeForm = () => {
         setIsSignup((change) => !change);
     };
+    const [loading, setLoading] = useState(true)
+    const switchLoader = () => {
+        setLoading((change) => !change);
+    }
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -25,6 +29,9 @@ const Auth = () => {
                 body: JSON.stringify({userName, email, password})
             })
             const data = await response.json()
+            console.log(data)
+            
+
             if(data.message === 'Inviter created'){
                 toast.success('Sign Up successfull', {
                     position: "top-center",
@@ -35,7 +42,19 @@ const Auth = () => {
                     draggable: true,
                     progress: undefined,
                 })
-                navigate('/inviters/auth')
+                switchLoader()
+                changeForm()
+            }else{
+                toast.error('Something went wrong', {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                })
+                switchLoader()
             }
         }else{
             const response = await fetch('http://localhost:5000/api/inviters/auth/login', {
@@ -44,6 +63,7 @@ const Auth = () => {
                 body: JSON.stringify({email, password})
             })
             const data = await response.json()
+            
             if(data.inviter){
                 localStorage.setItem('token', data.inviter)
                 toast.success('Login successful', {
@@ -55,8 +75,8 @@ const Auth = () => {
                     draggable: true,
                     progress: undefined,
                 })
-                
-                window.location.href = '/inviter/home';
+                switchLoader()
+                navigate('/inviter/home')
             }else{
                 toast.error('Invalid email or password', {
                     position: "top-center",
@@ -67,15 +87,12 @@ const Auth = () => {
                     draggable: true,
                     progress: undefined,
                 })
+                switchLoader()
             }
         }
     };
 
-    const [loading, setLoading] = useState(true)
-    const switchLoader = () => {
-        console.log("Changed")
-        setLoading((change) => !change);
-    }
+    
 
     return (
         <div className="flex h-screen">
@@ -93,7 +110,7 @@ const Auth = () => {
                 <ToastContainer />
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="mt-4 flex flex-col justify-center">
+                <form onSubmit={handleSubmit} className="mt-4 flex flex-col justify-center" autoComplete="off">
                     {
                         isSignup ?
                         <div className="mb-10 flex-col items-center justify-around sm:flex-row">
@@ -168,8 +185,8 @@ const Auth = () => {
                                     <HiArrowRight style={{ fontSize: '20px', marginLeft: '10px' }} /> 
                                 </div> 
                             :
-                                <div className="flex items-center justify-center py-3 px-10 bg-purple-500 text-white text-lg rounded-lg">
-                                    <PulseLoader size={10} color={"#fff"} />
+                                <div className="py-7 px-10 bg-gray-500 text-white text-lg rounded-lg">
+                                    <PropagateLoader size={12} color={"#fff"} speedMultiplier={0.8} />
                                 </div>
                         }
                         
