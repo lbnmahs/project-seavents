@@ -75,7 +75,7 @@ const CreateEvent = () => {
 
 
   return (
-    <div className="h-full bg-gray-200 w-full bg-cover bg-center" style={{ backgroundImage: "url('/assets/images/two.png')"  }}>
+    <div className="h-screen  bg-gray-200 w-full bg-cover bg-center" style={{ backgroundImage: "url('/assets/images/two.png')"  }}>
       <nav className="flex justify-around items-center bg-white mx-auto sticky top-0">
         <Link to="/inviter/home" className="font-bold italic text-blue-500 text-xl p-6">Sea<span className="text-purple-500">vents</span></Link>
         <button onClick={logout} className="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg">Logout</button>

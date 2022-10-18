@@ -5,9 +5,9 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import Inviter from './models/inviter.model';
-import Vendor from './models/vendor.model';
-import Event from './models/event.model';
+import Inviter from './models/inviter.model.js';
+import Vendor from './models/vendor.model.js';
+import Event from './models/event.model.js';
 
 dotenv.config();
 const app = express();
