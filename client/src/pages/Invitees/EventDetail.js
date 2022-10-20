@@ -45,7 +45,7 @@ const EventDetail = () => {
   }, [id])
   
   const sendRequest = async () => {
-    const res = await axios.put(`http://localhost:5000/api/inviters/events/update/${id}`, {
+    const res = await axios.put(`/api/inviters/events/update/${id}`, {
       eventName: inputs.eventName,
       eventDescription: inputs.eventDescription,
       eventDate: inputs.eventDate,

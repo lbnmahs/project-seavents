@@ -31,7 +31,7 @@ const CreateEvent = () => {
     const token = localStorage.getItem('token')
     const decoded = jwtDecode(token)
     const userId = decoded.id
-    const response = await axios.post('http://localhost:5000/api/inviters/events/create', {
+    const response = await axios.post('api/inviters/events/create', {
       eventName: inputs.eventName,
       eventDescription: inputs.eventDescription,
       eventDate: inputs.eventDate,
