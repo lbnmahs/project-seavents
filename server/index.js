@@ -8,6 +8,9 @@ import bcrypt from 'bcrypt'
 import Inviter from './models/inviter.model.js';
 import Vendor from './models/vendor.model.js';
 import Event from './models/event.model.js';
+import * as path from 'path';
+import {fileURLToPath} from 'url';
+
 
 dotenv.config();
 const app = express();
@@ -16,7 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 const CONN = process.env.DATABASE_ACCESS
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 1337
 mongoose.connect(CONN, { useNewUrlParser: true, useUnifiedTopology: true }, () => {console.log('Connected to database')})
 
 //routes
@@ -178,5 +181,12 @@ app.post('/api/vendors/auth/login', async (req, res) => {
         return res.json({ status: 'error', message: 'Invalid email or password', vendor: false })
     }
 })
+
+app.get('*', (req, res) => {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    res.sendFile(path.join(__dirname, 'static/index.html'))
+})
+
 
 app.listen(PORT, console.log(`Server listening on port: ${PORT}`))
