@@ -1,8 +1,7 @@
 
 # Seavent
 
-This is a clone of the Samsung gallery app aiming to show how to implement the GridView Widget in Flutter.
-
+This is an event creation and management system. It acted as my 3rd year computer science project.
 
 ## Getting Started
 
